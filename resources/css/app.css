@@ -1,0 +1,153 @@
+/* resources/css/app.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CPSU Custom Colors */
+:root {
+    --cpsu-green: #BBC433;
+    --cpsu-forest-green: #2D5A27;
+    --cpsu-white: #FFFFFF;
+}
+
+/* Custom Components */
+@layer components {
+    .btn-primary {
+        @apply px-4 py-2 rounded-lg text-white font-medium transition duration-150 ease-in-out;
+        background-color: var(--cpsu-green);
+    }
+    
+    .btn-primary:hover {
+        @apply opacity-90 transform scale-105;
+    }
+    
+    .btn-secondary {
+        @apply px-4 py-2 rounded-lg font-medium transition duration-150 ease-in-out;
+        background-color: var(--cpsu-forest-green);
+        color: var(--cpsu-white);
+    }
+    
+    .btn-outline {
+        @apply px-4 py-2 rounded-lg font-medium border transition duration-150 ease-in-out;
+        border-color: var(--cpsu-green);
+        color: var(--cpsu-forest-green);
+    }
+    
+    .card {
+        @apply bg-white rounded-xl shadow-sm hover:shadow-md transition duration-300;
+    }
+    
+    .badge-success {
+        @apply px-2 py-1 rounded-full text-xs font-semibold;
+        background-color: var(--cpsu-green);
+        color: var(--cpsu-white);
+    }
+    
+    .badge-info {
+        @apply px-2 py-1 rounded-full text-xs font-semibold;
+        background-color: var(--cpsu-forest-green);
+        color: var(--cpsu-white);
+    }
+}
+
+/* Custom Animations */
+@keyframes slideIn {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--cpsu-green);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cpsu-forest-green);
+}
+
+/* Smooth Transitions */
+* {
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* Loading States */
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: inherit;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-left-color: var(--cpsu-green);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+    }
+    
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #e5e7eb !important;
+    }
+}
