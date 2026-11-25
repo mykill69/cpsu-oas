@@ -19,7 +19,10 @@ use App\Http\Controllers\QA\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/login');
+// Plain GET route (not Route::redirect) so it behaves the same with the route cache on the server.
+Route::get('/', function () {
+    return redirect()->route('login');
+})->name('home');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

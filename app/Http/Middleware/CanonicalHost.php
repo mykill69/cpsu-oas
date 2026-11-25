@@ -18,7 +18,9 @@ class CanonicalHost
         $host = $app['host'] ?? null;
         $port = $app['port'] ?? (($app['scheme'] ?? 'http') === 'https' ? 443 : 80);
 
-        if ($host && ! app()->runningUnitTests() && $request->isMethod('GET') && ($request->getHost() !== $host || (int) $request->getPort() !== (int) $port)) {
+        // Only on a developer PC (localhost vs 127.0.0.1). On a real server the web server owns the hostname,
+        // and behind a proxy the port seen here can differ, which would loop.
+        if ($host && app()->environment('local') && ! app()->runningUnitTests() && $request->isMethod('GET') && ($request->getHost() !== $host || (int) $request->getPort() !== (int) $port)) {
             return redirect()->to(rtrim(config('app.url'), '/') . $request->getRequestUri());
         }
 

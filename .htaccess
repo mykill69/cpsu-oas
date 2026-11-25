@@ -1,0 +1,17 @@
+# Safety net: the project root must never be served directly — only public/ is meant to be
+# web-reachable (see docs/deploy.md). If this folder ever ends up inside a web root,
+# everything outside public/ is refused and nothing can be listed.
+Options -Indexes
+
+# Never serve dot-files (.env, .git, …) from here or any sub-folder.
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # app/, config/, storage/, vendor/, composer.json, artisan, … -> 403 Forbidden
+    RewriteRule ^(?!public/) - [F,L]
+</IfModule>
