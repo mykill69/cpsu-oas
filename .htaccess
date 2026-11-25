@@ -1,9 +1,9 @@
-# Safety net: the project root must never be served directly — only public/ is meant to be
-# web-reachable (see docs/deploy.md). If this folder ever ends up inside a web root,
-# everything outside public/ is refused and nothing can be listed.
+# Serves the app when this folder sits inside the web root (e.g. /var/www/html/cpsu-oas
+# answering at https://is.cpsu.edu.ph/cpsu-oas/). Every request is passed into public/,
+# so app code, .env, vendor/ and storage/ are never served and nothing is listed.
 Options -Indexes
 
-# Never serve dot-files (.env, .git, …) from here or any sub-folder.
+# Never serve dot-files (.env, .git, …).
 <FilesMatch "^\.">
     <IfModule mod_authz_core.c>
         Require all denied
@@ -12,6 +12,11 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    # app/, config/, storage/, vendor/, composer.json, artisan, … -> 403 Forbidden
-    RewriteRule ^(?!public/) - [F,L]
+    # /cpsu-oas/login/ -> /cpsu-oas/login (done here, so the address never shows "public")
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^.+/$ %1 [R=301,L]
+
+    # /cpsu-oas/login -> public/login, /cpsu-oas/css/oas.css -> public/css/oas.css, …
+    # (public/.htaccess then hands non-files to index.php.)
+    RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>

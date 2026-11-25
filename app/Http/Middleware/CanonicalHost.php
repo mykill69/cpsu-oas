@@ -20,7 +20,7 @@ class CanonicalHost
 
         // Only on a developer PC (localhost vs 127.0.0.1). On a real server the web server owns the hostname,
         // and behind a proxy the port seen here can differ, which would loop.
-        if ($host && app()->environment('local') && ! app()->runningUnitTests() && $request->isMethod('GET') && ($request->getHost() !== $host || (int) $request->getPort() !== (int) $port)) {
+        if ($host && app()->environment('local') && ! app()->runningUnitTests() && $request->getBasePath() === '' && $request->isMethod('GET') && ($request->getHost() !== $host || (int) $request->getPort() !== (int) $port)) {
             return redirect()->to(rtrim(config('app.url'), '/') . $request->getRequestUri());
         }
 

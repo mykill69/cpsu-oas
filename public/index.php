@@ -6,6 +6,18 @@ use Illuminate\Http\Request;
 define('LARAVEL_START', microtime(true));
 
 /*
+| When the project folder sits in the web root and its root .htaccess passes requests into
+| public/ (https://is.cpsu.edu.ph/cpsu-oas/login -> /cpsu-oas/public/index.php), tell Laravel
+| its address is /cpsu-oas, not /cpsu-oas/public, so routes and links don't include "public".
+*/
+$script = $_SERVER['SCRIPT_NAME'] ?? '';
+if (str_ends_with($script, '/public/index.php')
+    && ! str_contains(strtok($_SERVER['REQUEST_URI'] ?? '', '?'), substr($script, 0, -strlen('index.php')))) {
+    $_SERVER['SCRIPT_NAME'] = $_SERVER['PHP_SELF'] = substr($script, 0, -strlen('/public/index.php')) . '/index.php';
+}
+unset($script);
+
+/*
 |--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance
 |--------------------------------------------------------------------------

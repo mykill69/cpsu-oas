@@ -2,11 +2,15 @@
 
 The site lives at **https://is.cpsu.edu.ph/cpsu-oas**. The project sits in `/var/www/html/cpsu-oas`, next to the other apps.
 
-**Rule:** the address `/cpsu-oas` must be served from the project's **`public/`** folder only, never from the project folder itself. Otherwise `.env` (passwords, keys), logs and uploads can be downloaded. An Apache `Alias` does that:
+**Rule:** the address `/cpsu-oas` must be served from the project's **`public/`** folder only, never from the project folder itself. Otherwise `.env` (passwords, keys), logs and uploads can be downloaded.
+
+The project's own root `.htaccess` does this. It passes every request into `public/`, and `public/index.php` tells Laravel its address is `/cpsu-oas`. You need **no Apache `Alias`**; Apache only has to allow `.htaccess` files for `/var/www/html` (`AllowOverride All`):
 
 ```
 https://is.cpsu.edu.ph/cpsu-oas/...   →   /var/www/html/cpsu-oas/public/...
 ```
+
+> Do **not** also add an `Alias /cpsu-oas` in `/etc/httpd/conf.d/`. The two methods conflict.
 
 Run everything as root. Apache's user on this server is `apache`; run artisan as that user so cache files stay writable.
 
@@ -21,19 +25,15 @@ cd cpsu-oas
 composer install --no-dev --optimize-autoloader
 ```
 
-### Apache: serve /cpsu-oas from public/
+### Apache: allow .htaccess in /var/www/html
 
-Create `/etc/httpd/conf.d/cpsu-oas.conf`:
+In `/etc/httpd/conf/httpd.conf`, the `<Directory "/var/www/html">` block needs:
 
 ```apache
-# CPSU OAS: the address /cpsu-oas is served ONLY from the project's public/ folder.
-Alias /cpsu-oas /var/www/html/cpsu-oas/public
-
-<Directory "/var/www/html/cpsu-oas/public">
-    Options -Indexes +FollowSymLinks
-    AllowOverride None
+<Directory "/var/www/html">
+    Options FollowSymLinks
+    AllowOverride All
     Require all granted
-    FallbackResource /cpsu-oas/index.php
 </Directory>
 ```
 
